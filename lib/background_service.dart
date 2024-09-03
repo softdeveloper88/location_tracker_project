@@ -6,11 +6,11 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'odoo_connector.dart';
 
 void startBackgroundService() {
@@ -55,7 +55,7 @@ Future<void> initializeService() async {
       foregroundServiceTypes: [AndroidForegroundType.location],
       notificationChannelId: notificationChannelId,
       // this must match with notification channel you created above.
-      initialNotificationTitle: 'Employee Location Tracker',
+      initialNotificationTitle: 'Employee App',
       initialNotificationContent: 'Initializing',
       foregroundServiceNotificationId: notificationId,
     ),
@@ -65,6 +65,7 @@ Future<void> initializeService() async {
       onBackground: onIosBackground,
     ),
   );
+
 }
 
 @pragma('vm:entry-point')
@@ -72,24 +73,29 @@ Future<bool> onIosBackground(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
 
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  await preferences.reload();
+  final log = preferences.getStringList('log') ?? <String>[];
+  log.add(DateTime.now().toIso8601String());
+  await preferences.setStringList('log', log);
+
   return true;
 }
- const platformNative = MethodChannel('flutter.native/helper');
+
+const platformNative = MethodChannel('flutter.native/helper');
 
 Future<void> responseDeviceId() async {
   try {
     String deviceId = await platformNative.invokeMethod("PhoneDeviceId");
     var prefs = await SharedPreferences.getInstance();
-    prefs.setString("deviceId",deviceId);
-
+    prefs.setString("deviceId", deviceId);
     // deviceListMode = ConnectedDevices().fetchConnectDeviceList(deviceId, widget.email);
     // print("DeviceId:: $deviceId");
-
   } on PlatformException catch (e) {
     debugPrint("Failed to Invoke: '${e.message}'.");
   }
-
 }
+
 void sendLocationData() async {
   try {
     // Get the current position (latitude and longitude)
@@ -102,28 +108,30 @@ void sendLocationData() async {
     // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     // String androidId = androidInfo.id;
-   String deviceUniqueId;
-      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      if(Platform.isAndroid) {
-      var prefs = await SharedPreferences.getInstance();
-      deviceUniqueId= prefs.getString("deviceId")??'';
-        // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        // deviceUniqueId = androidInfo.id;
-        print('androidInfo');
-      }else {
-        var prefs = await SharedPreferences.getInstance();
-        deviceUniqueId= prefs.getString("deviceId")??'';
+    String deviceUniqueId;
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    var prefs = await SharedPreferences.getInstance();
 
-        // IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
-        // deviceUniqueId = iosDeviceInfo.identifierForVendor.toString();
-        // print(deviceUniqueId);
-        print('deviceUniqueId');
-      }
-      if(deviceUniqueId ==''){
-         deviceUniqueId = await platformNative.invokeMethod("PhoneDeviceId");
-      }
+    if (Platform.isAndroid) {
+      deviceUniqueId = prefs.getString("deviceId") ?? '';
+      // AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      // deviceUniqueId = androidInfo.id;
+      print('androidInfo');
+    } else {
 
-      //
+      deviceUniqueId = prefs.getString("deviceId") ?? '';
+
+      // IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
+      // deviceUniqueId = iosDeviceInfo.identifierForVendor.toString();
+      // print(deviceUniqueId);
+      print('deviceUniqueId');
+    }
+    if (deviceUniqueId == '') {
+      deviceUniqueId = await platformNative.invokeMethod("PhoneDeviceId");
+    }
+    var barcode = prefs.getString("barcode") ?? '';
+
+    //
     // Get the current date, time, and dateTime
     DateTime now = DateTime.now();
     String time = DateFormat('HH:mm:ss').format(now);
@@ -133,15 +141,15 @@ void sendLocationData() async {
     // Create the OdooConnector instance
     var odooConnector = OdooConnector(
       'http://13.58.175.151:8017', // Odoo URL
-      'staging',                   // Database name
-      'mobile_app',                // Username
-      '123',                       // Password
+      'staging', // Database name
+      'mobile_app', // Username
+      '123', // Password
     );
 
     // Send the data to Odoo
     await odooConnector.sendDataToOdoo(
-      mac: '',
-      androidId:deviceUniqueId,
+      mac: barcode,
+      androidId: deviceUniqueId,
       time: time,
       date: date,
       dateTime: dateTime,
@@ -154,12 +162,12 @@ void sendLocationData() async {
     print("Failed to send data to Odoo: $e");
   }
 }
+
 @pragma('vm:entry-point')
 Future<void> onStart(ServiceInstance service) async {
   // Only available for flutter 3.0.0 and later
   DartPluginRegistrant.ensureInitialized();
-  final Geolocator geolocator = Geolocator();
-  late Position position;
+
   bool isCurrentTimeWithinRange(TimeOfDay startTime, TimeOfDay endTime) {
     // Get the current time
     final now = TimeOfDay.now();
@@ -172,6 +180,7 @@ Future<void> onStart(ServiceInstance service) async {
     // Check if current time is within the specified range
     return nowMinutes >= startMinutes && nowMinutes <= endMinutes;
   }
+
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -186,9 +195,14 @@ Future<void> onStart(ServiceInstance service) async {
 
     // Print the result
     if (isWithinRange) {
+      var prefs = await SharedPreferences.getInstance();
 
-      sendLocationData();
+      if (prefs.containsKey('deviceId')) {
+        sendLocationData();
+      }else{
+        print("No Employee Register");
 
+      }
       print("The current time is between 7 AM and 7 PM.");
     } else {
       print("The current time is outside the range of 7 AM to 7 PM.");
@@ -232,7 +246,7 @@ Future<void> onStart(ServiceInstance service) async {
       if (await service.isForegroundService()) {
         flutterLocalNotificationsPlugin.show(
           notificationId,
-          'Employee Track Location',
+          'Employee App',
           'Time Now ${DateTime.now()}',
           const NotificationDetails(
             android: AndroidNotificationDetails(
@@ -244,6 +258,22 @@ Future<void> onStart(ServiceInstance service) async {
           ),
         );
       }
-    }
+        service.on('setAsForeground').listen((event) {
+          service.setAsForegroundService();
+        });
+
+      }
+
+      // service.on('stopService').listen((event) {
+      //   service.stopSelf();
+      // });
+
+    service.invoke(
+      'update',
+      {
+        "current_date": DateTime.now().toIso8601String(),
+        "device": 'device id',
+      },
+    );
   });
 }

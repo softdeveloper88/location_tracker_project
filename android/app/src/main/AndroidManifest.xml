@@ -19,11 +19,14 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
     <application
-        android:label="Employee Location tracker"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:label="Employee App"
         android:name="${applicationName}"
         android:usesCleartextTraffic="true"
+        android:allowBackup="false"
+        tools:replace="android:allowBackup"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"

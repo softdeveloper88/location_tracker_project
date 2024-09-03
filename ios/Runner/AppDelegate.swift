@@ -8,8 +8,10 @@ import flutter_background_service_ios
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-  SwiftFlutterBackgroundServicePlugin.taskIdentifier = "your.custom.task.identifier"
-     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
+ 
+      SwiftFlutterBackgroundServicePlugin.taskIdentifier = "dev.flutter.background.refresh"
+   
+      let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
            let batteryChannel = FlutterMethodChannel(name: "flutter.native/helper",
                                                    binaryMessenger: controller.binaryMessenger)
       batteryChannel.setMethodCallHandler({

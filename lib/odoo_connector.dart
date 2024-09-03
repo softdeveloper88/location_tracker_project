@@ -45,6 +45,37 @@ class OdooConnector {
       rethrow;
     }
   }
+  Future fetchEmployeeData(int barcode) async {
+    try {
+      // Define the model and the fields you want to retrieve
+      await authenticate();
+      final String model = 'hr.employee';
+      final List fields = ['id', 'name', 'work_email', 'job_id'];
+
+      // Search for the employee by ID
+      final response = await _client.callKw({
+        'model': model,
+        'method': 'search_read',
+        'args': [
+          [['barcode', '=', barcode]],
+        ],
+        'kwargs': {
+          'fields': [],  // Empty list to fetch all fields, could also omit this if unnecessary
+        },
+      });
+
+      // Process the response
+      if (response.isNotEmpty) {
+        return   response[0];
+        // print('Employee Data: $employeeData');
+      } else {
+        return  null;
+        print('Employee not found');
+      }
+    } on OdooException catch (e) {
+      print('Error fetching employee data: ${e.message}');
+    }
+  }
   Future<void> sendDataToOdoo({String? mac,String? androidId,String? time,String? date,String? dateTime,String? latitude,String? longitude}) async {
 
 

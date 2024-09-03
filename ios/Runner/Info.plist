@@ -2,12 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>dev.flutter.background.refresh</string>
+	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Test Project</string>
+	<string>Employee App</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +19,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>test_project</string>
+	<string>Employee App</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -51,18 +55,14 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>BGTaskSchedulerPermittedIdentifiers</key>
-    <array>
-        <string>dev.flutter.background.refresh</string>
-    </array>
-	 <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-        <string>We need access background location so that this phone can be tracked even this app is in background, if it gets lost</string>
-        <key>NSLocationAlwaysUsageDescription</key>
-        <string>We need access background location so that this phone can be tracked even this app is in background, if it gets lost</string>
-        <key>NSLocationWhenInUseUsageDescription</key>
-        <string>We need access background location so that this phone can be tracked even this app is in background, if it gets lost</string>
-      <key>NSLocationDefaultAccuracyReduced</key>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need access background location so that this phone can be tracked even this app is in background, if it gets lost</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need access background location so that this phone can be tracked even this app is in background, if it gets lost</string>
+	<key>NSLocationDefaultAccuracyReduced</key>
 	<false/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need access background location so that this phone can be tracked even this app is in background, if it gets lost</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

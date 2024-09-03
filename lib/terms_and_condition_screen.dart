@@ -10,6 +10,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_project/phone_track_location_screen.dart';
 
+import 'employee_search_screen.dart';
+
 class TermsAndConditionScreen extends StatefulWidget {
   TermsAndConditionScreen({super.key});
 
@@ -115,7 +117,7 @@ Continued use of this app constitutes acceptance of these terms.
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      PhoneTrackLocationScreen(),
+                                      EmployeeSearchScreen(),
                                 ));
                           }
                         } else {
@@ -130,7 +132,7 @@ Continued use of this app constitutes acceptance of these terms.
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      PhoneTrackLocationScreen(),
+                                      EmployeeSearchScreen(),
                                 ));
                           }
                         }
@@ -351,7 +353,7 @@ Continued use of this app constitutes acceptance of these terms.
           builder: (BuildContext context) => CupertinoAlertDialog(
                 title: const Text("Location Permission"),
                 content: const Text(
-                    "Employee location tracker want to access your current location"),
+                    "Employee App want to access your current location"),
                 actions: <Widget>[
                   CupertinoDialogAction(
                     child: const Text("Cancel"),
