@@ -353,7 +353,7 @@ Continued use of this app constitutes acceptance of these terms.
           builder: (BuildContext context) => CupertinoAlertDialog(
                 title: const Text("Location Permission"),
                 content: const Text(
-                    "Employee App want to access your current location"),
+                    "Time Optimizer App want to access your current location"),
                 actions: <Widget>[
                   CupertinoDialogAction(
                     child: const Text("Cancel"),

@@ -50,7 +50,6 @@ class OdooConnector {
       // Define the model and the fields you want to retrieve
       await authenticate();
       final String model = 'hr.employee';
-      final List fields = ['id', 'name', 'work_email', 'job_id'];
 
       // Search for the employee by ID
       final response = await _client.callKw({

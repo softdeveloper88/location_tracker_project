@@ -97,7 +97,7 @@ class _SplashScreensState extends State<SplashScreens> {
                   width: 50.w,
                 ),
               ),
-              Text("Employee App",
+              Text("Time Optimizer",
                   style: GoogleFonts.poppins(
                       fontSize: 14.sp,
                       color: Colors.blue,

@@ -55,7 +55,7 @@ Future<void> initializeService() async {
       foregroundServiceTypes: [AndroidForegroundType.location],
       notificationChannelId: notificationChannelId,
       // this must match with notification channel you created above.
-      initialNotificationTitle: 'Employee App',
+      initialNotificationTitle: 'Time Optimizer',
       initialNotificationContent: 'Initializing',
       foregroundServiceNotificationId: notificationId,
     ),
@@ -185,10 +185,13 @@ Future<void> onStart(ServiceInstance service) async {
       FlutterLocalNotificationsPlugin();
 
   // bring to foreground
+  service.on("start").listen((event) {
+    print('event ${event?.entries.toString()}');
+  });
   Timer.periodic(const Duration(minutes: 1), (timer) async {
     print("${timer.isActive}");
-    TimeOfDay startTime = TimeOfDay(hour: 7, minute: 0);
-    TimeOfDay endTime = TimeOfDay(hour: 19, minute: 0);
+    TimeOfDay startTime = TimeOfDay(hour: 7, minute: 15);
+    TimeOfDay endTime = TimeOfDay(hour: 17, minute: 30);
 
     // Check if current time is within the specified range
     bool isWithinRange = isCurrentTimeWithinRange(startTime, endTime);
@@ -246,7 +249,7 @@ Future<void> onStart(ServiceInstance service) async {
       if (await service.isForegroundService()) {
         flutterLocalNotificationsPlugin.show(
           notificationId,
-          'Employee App',
+          'Time Optimizer',
           'Time Now ${DateTime.now()}',
           const NotificationDetails(
             android: AndroidNotificationDetails(

@@ -48,17 +48,37 @@ class _EmployeeSearchScreenState extends State<EmployeeSearchScreen> {
         setState(() async {
           final data = jsonEncode(response);
           _employeeData = json.decode(data)['name'];
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('barcode', employeeId);
-          await prefs.setString('employeeName', _employeeData.toString());
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    PhoneTrackLocationScreen(),
-              ));
-          // Adjust based on your Odoo response
+          bool isEmployeeLocation = json.decode(data)['is_employee_track'];
+         if(isEmployeeLocation) {
+           SharedPreferences prefs = await SharedPreferences.getInstance();
+           await prefs.setString('barcode', employeeId);
+           await prefs.setString('employeeName', _employeeData.toString());
+           Navigator.pushReplacement(
+               context,
+               MaterialPageRoute(
+                 builder: (context) =>
+                     PhoneTrackLocationScreen(),
+               ));
+           // Adjust based on your Odoo response
+         }else{
+           setState(() {
+             showDialog(context: context, builder: (context){
+               return AlertDialog(
+                 title:Text("Warning !",style: TextStyle(color: Colors.red),),
+                 content:Text('You cannot use the tracker on this phone because it is already in use on another phone',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),),
 
+                 actions: [
+                   MaterialButton(
+                       onPressed: (){
+                         Navigator.pop(context);
+                       },
+                       child: Text('OK',style: TextStyle(color: Colors.red,fontSize: 16,fontWeight: FontWeight.bold),))
+                 ],
+               );
+             });
+           });
+
+           }
         });
       } else {
         setState(() {
@@ -131,6 +151,7 @@ class _EmployeeSearchScreenState extends State<EmployeeSearchScreen> {
                   'Employee Name: $_employeeData',
                   style: TextStyle(fontSize: 16),
                 ),
+
               ] else if (_errorMessage != null) ...[
                 Text(
                   _errorMessage!,
