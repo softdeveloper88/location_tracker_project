@@ -28,6 +28,8 @@ class _SplashScreensState extends State<SplashScreens> {
     sharedPreferences();
 
     Future.delayed(const Duration(seconds: 4), () {
+      String barcode = prefs!.getString("barcode") ?? '';
+
       // Navigator.push(
       //     context,
       //     MaterialPageRoute(
@@ -48,8 +50,7 @@ class _SplashScreensState extends State<SplashScreens> {
       //   pageRoutPushReplacement(context, const LoginScreen());
       //
       // }
-      if (termsAccepted) {
-
+      if (termsAccepted && barcode !='') {
         Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

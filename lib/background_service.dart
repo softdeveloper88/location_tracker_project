@@ -145,7 +145,7 @@ void sendLocationData() async {
       'mobile_app', // Username
       '123', // Password
     );
-
+    print(barcode);
     // Send the data to Odoo
     await odooConnector.sendDataToOdoo(
       mac: barcode,
@@ -199,8 +199,9 @@ Future<void> onStart(ServiceInstance service) async {
     // Print the result
     if (isWithinRange) {
       var prefs = await SharedPreferences.getInstance();
-
-      if (prefs.containsKey('deviceId')) {
+      var barcode = prefs.getString("barcode") ?? '';
+      print(barcode);
+      if (prefs.containsKey('deviceId') && barcode!='') {
         sendLocationData();
       }else{
         print("No Employee Register");

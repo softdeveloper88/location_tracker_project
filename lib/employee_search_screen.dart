@@ -49,7 +49,7 @@ class _EmployeeSearchScreenState extends State<EmployeeSearchScreen> {
           final data = jsonEncode(response);
           _employeeData = json.decode(data)['name'];
           bool isEmployeeLocation = json.decode(data)['is_employee_track'];
-         if(isEmployeeLocation) {
+         if(!isEmployeeLocation) {
            SharedPreferences prefs = await SharedPreferences.getInstance();
            await prefs.setString('barcode', employeeId);
            await prefs.setString('employeeName', _employeeData.toString());
