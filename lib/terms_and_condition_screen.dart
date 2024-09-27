@@ -103,6 +103,7 @@ Continued use of this app constitutes acceptance of these terms.
               child: ElevatedButton(
                 onPressed: _isChecked
                     ? () async {
+                  print('hello');
                         // widget.accept!();
                         // permissionLocation();
                         if (Platform.isAndroid) {
@@ -121,12 +122,22 @@ Continued use of this app constitutes acceptance of these terms.
                                 ));
                           }
                         } else {
+                          print('hello');
                           var permission = await Geolocator.requestPermission();
                           if (permission == LocationPermission.denied) {
-                          } else if (permission ==
-                              LocationPermission.whileInUse) {
+                          } else if (permission == LocationPermission.whileInUse) {
                             SharedPreferences prefs =
                                 await SharedPreferences.getInstance();
+                            await prefs.setBool('acceptTerms', true);
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EmployeeSearchScreen(),
+                                ));
+                          }else if(permission == LocationPermission.always){
+                            SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
                             await prefs.setBool('acceptTerms', true);
                             Navigator.pushReplacement(
                                 context,
